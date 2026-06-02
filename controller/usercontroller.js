@@ -7,7 +7,7 @@ try {
     const hashPassword=await bcryptjs.hash(pass,10)
     console.log(hashPassword);
     await userModel.create({uname,email,pass:hashPassword})
-    resp.json("register succesfull...")
+    resp.redirect("/login")
     
 } catch (error) {
     console.log(error);
@@ -23,23 +23,23 @@ const {uname ,pass}= req.body;
 
  if (user && await bcryptjs.compare(pass , user.pass)) {
     req.session.name = uname
-    resp.json("logged in....")
+    resp.redirect("/dashboard")
  } else {
-    console.log("invalid credientials....");
+    resp.redirect("/login")
     
  }
 }
 const dashboard = async(req,resp) =>{
     if (!req.session.name) {
-        resp.json("kindly login first!!!")
+        resp.redirect("/login")
     } else {
-        resp.json(req.session.name)
+        resp.render("dashboard",{data:req.session.name})
     }
 }
 
 const logout = async (req,resp) =>{
     req.session.destroy(()=>{
-        resp.json("logged outt...")
+        resp.redirect("/login")
     })
 }
 module.exports={register,login,dashboard,logout}
